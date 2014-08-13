@@ -1,20 +1,31 @@
 import timeit
 
-from puppeteer.stageprops import *
+from ..stageprops import *
 
-@on(command='privmsg', \
-    to_channel=True, \
-    text="@ping")
-def pong_request(puppet, source, target, message):
-    puppet.protocol.put('privmsg', target, "Pong!")
+@on('privmsg')
+def handle_pong_request(puppet, source, target, message):
+    if message != "@ping":
+        return
 
-@on(command='privmsg', \
-    to_channel=True, \
-    text="@rehash", \
-    username=puppeteer.config['stageprops']['chanutils']['admin']['username'], \
-    hostname=puppeteer.config['stageprops']['chanutils']['admin']['hostname']) # hack for now
-def rehash_request(puppet, source, target, message):
+    nickname = source.split("!")[0]
+
+    if target[0] in "#&":
+        puppet.protocol.put('privmsg', target, "{}: Pong!".format(nickname))
+    else:
+        puppet.protocol.put('privmsg', nickname, "Pong!")
+
+@on('privmsg')
+def handle_rehash_request(puppet, source, target, message):
+    if message != "@rehash":
+        return
+
     start = timeit.default_timer()
     puppeteer.rehash()
     elapsed = (timeit.default_timer() - start) * 1000
-    puppet.protocol.put('privmsg', target, "Rehashed ({:.4}ms)".format(elapsed))
+
+    nickname = source.split("!")[0]
+
+    if target[0] in "#&":
+        puppet.protocol.put('privmsg', target, "{}: Rehashed ({:.4}ms)".format(nickname, elapsed))
+    else:
+        puppet.protocol.put('privmsg', nickname, "Rehashed ({:.4}ms)".format(elapsed))

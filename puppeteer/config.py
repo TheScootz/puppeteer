@@ -2,25 +2,18 @@ config = {
     # List of props to include, with any initialization parameters.
     'stageprops': {
         'baseutils': {},
-        'chanutils': {
-            'admin': {
-                'username': 'root',
-                'hostname': 'example.org',
-            },
-        },
-        'logutils': {},
+        'chanutils': {},
+        'triggers': {},
     },
     # Global configuration inheritted by puppets.  Any values
     # not overwritten individually will be used by the puppets.
-    'global': {
-        
-    },
+    'global': {},
     # Unique name of the puppet and its individual configuration.
     # Global configuration is inherited.
     'puppets': {
         'Marionette': {
             # Host and port that this puppet uses to connect.
-            'host': "irc.network.org",
+            'host': "irc.example.org",
             'port': 6667,
             # List of nicknames to try. The '?' character is replaced
             # with a random number in range 0-9 inclusive.
@@ -34,7 +27,7 @@ config = {
             'realname': "Strings attached",
             # List of channels to join on connection.
             'channels': [
-                "#puppetshow",
+                "#channel",
             ],
             # List of enabled stageprops for the puppet.
             # Each can use per-puppet configuration as well as
@@ -44,9 +37,8 @@ config = {
             'stageprops': {
                 'baseutils': {},
                 'chanutils': {},
-                'logutils': {},
+                'triggers': {},
             }
         }
     },
 }
-

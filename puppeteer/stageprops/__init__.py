@@ -1,45 +1,34 @@
 import asyncio
 from functools import wraps
 
-stageprops = {}
-timers = []
+handlers = []
 
-class EventHandler:
-    def __init__(self, function, requirements):
-        self.function = function
-        self.requirements = requirements
+def handle(event_name, *args, **kwargs):
+    for _, handler_event_name, _, handler in handlers:
+        if event_name == handler_event_name:
+            handler(*args, **kwargs)
 
-    def __lt__(self, *args):
-        return True
+def on(event_name, priority=20):
+    def decorator(handler):
+        handler_name = "{}.{}".format(handler.__module__.split(".")[-1], handler.__qualname__)
+        handlers.append((priority, event_name, handler_name, handler))
 
-def on(priority=20, **requirements):
-    def decorator(f):
-        prop_name = f.__module__.split(".")[-1]
-
-        if prop_name not in stageprops:
-            stageprops[prop_name] = []
-
-        stageprops[prop_name].append((priority, EventHandler(f, requirements)))
-
-        @wraps(f)
+        @wraps(handler)
         def wrapper(*args, **kwargs):
-            f(*args, **kwargs)
+            handler(*args, **kwargs)
         return wrapper
 
     return decorator
 
-def timer(interval=None):
-    def decorator(f):
-        @wraps(f)
-        def timer_wrapper(*args, **kwargs):
-            f(*args, **kwargs)
-            asyncio.get_event_loop().call_later(interval, timer_wrapper, *args, **kwargs)
-        timers.append(timer_wrapper)
-
-        @wraps(f)
+def triggers(event_name):
+    def decorator(check):
+        
+        @wraps(check)
         def wrapper(*args, **kwargs):
-            f(*args, **kwargs)
+            if check(*args, **kwargs):
+                handle(event_name, *args, **kwargs)
         return wrapper
+    
     return decorator
 
-__all__ = ['on', 'timer', 'puppeteer']
+__all__ = ['on', 'triggers', 'puppeteer']

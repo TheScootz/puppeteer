@@ -1,14 +1,16 @@
-from puppeteer.stageprops import *
+from ..stageprops import *
 
-@on(command='ping')
+@on('ping')
 def send_pong(puppet, source, server):
     puppet.protocol.put('pong', server)
 
-@on(reply='376')
-@on(reply='422')
+@on('rpl_endofmotd')
+@on('err_nomotd')
 def autojoin_config_channels(puppet, source, target, text):
     puppet.protocol.put('join', ",".join(puppet.config['channels']))
 
-@on(reply='001')
-def detect_my_nickname(puppet, source, nickname, message):
+@on('rpl_welcome')
+def detect_connected(puppet, source, nickname, message):
     puppet.nickname = nickname
+
+
