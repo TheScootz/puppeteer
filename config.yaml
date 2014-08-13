@@ -1,0 +1,23 @@
+%YAML 1.2
+---
+stageprops:
+  baseutils:
+  chanutils:
+  triggers:
+global:
+  port: 6667
+  username: m???
+puppets:
+  Marionette:
+    host: irc.example.org
+    nickname:
+      - Marionette
+      - Puppet??
+      - Puppet???
+    realname: Strings attached
+    channels:
+      - "#channel"
+    stageprops:
+      baseutils:
+      chanutils:
+      triggers:

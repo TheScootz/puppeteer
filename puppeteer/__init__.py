@@ -84,6 +84,9 @@ class Puppeteer:
         self.config = config
         self.loaded_props = {}
         for puppet_alias, puppet_config in self.config['puppets'].items():
+            for key in self.config['global']:
+                if key not in puppet_config:
+                    puppet_config[key] = self.config['global'][key]
             self.puppets[puppet_alias] = Puppet(self, puppet_config)
             self.puppets[puppet_alias].alias = puppet_alias
 
